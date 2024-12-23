@@ -8,7 +8,7 @@ conda create --name DANS python=3.9.0
 # activate environment
 conda activate DANS
 
-# install required rackages
+# install required packages
 pip install -r requirements_py39.txt
 ```
 ## How to train
