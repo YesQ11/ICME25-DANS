@@ -7,11 +7,11 @@ import torch
 import pytorch_lightning as pl
 from torch_ema import ExponentialMovingAverage
 
-from sgmse import sampling
-from sgmse.sdes import SDERegistry
-from sgmse.backbones import BackboneRegistry
-from sgmse.util.inference import evaluate_model
-from sgmse.util.other import pad_spec
+from dans import sampling
+from dans.sdes import SDERegistry
+from dans.backbones import BackboneRegistry
+from dans.util.inference import evaluate_model
+from dans.util.other import pad_spec
 
 import json
 import os

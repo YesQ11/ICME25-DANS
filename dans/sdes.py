@@ -2,10 +2,10 @@ import abc
 import warnings
 
 import numpy as np
-from sgmse.util.tensors import batch_broadcast
+from dans.util.tensors import batch_broadcast
 import torch
 
-from sgmse.util.registry import Registry
+from dans.util.registry import Registry
 
 
 SDERegistry = Registry("SDE")
@@ -136,25 +136,17 @@ class SDE(abc.ABC):
         pass
 
 
-@SDERegistry.register("vpsde")
-class VPSDE(SDE):
+@SDERegistry.register("dans_sde")
+class DANS_SDE(SDE):
     @staticmethod
     def add_argparse_args(parser):
         parser.add_argument("--N", type=int, default=50,
             help="The number of timesteps in the SDE discretization. 1000 by default")
         parser.add_argument("--beta-min", type=float, default=0.5, help="The minimum beta to use.")
         parser.add_argument("--beta-max", type=float, default=10, help="The maximum beta to use.")
-        parser.add_argument("--eta", type=float, default=1.5, help="The eta to use.")
-        parser.add_argument("--vp_mode", type=str, default='ddpm', help="beta shchdule ddmp or improved ddpm")
-        parser.add_argument("--eta_mode", type=str, default='exp', help="eta mode exponent, linear, ect")
-        parser.add_argument("--customized_var", action='store_true',  help="Customize your own exponential variance scheduler")
-        parser.add_argument("--cv_mode", type=int, default=1, help="The first coefficient .")
-        parser.add_argument("--cv1", type=float, default=0.3, help="The first coefficient .")
-        parser.add_argument("--cv2", type=float, default=0.1, help="The first coefficient .")
-
         return parser
 
-    def __init__(self, beta_min, beta_max, eta, N=50, vp_mode='ddpm', eta_mode='exp', customized_var=False, cv_mode=1, cv1=0.3, cv2=0.1, **ignored_kwargs):
+    def __init__(self, beta_min, beta_max, N=50, **ignored_kwargs):
         """
         Args:
             beta_min: smallest sigma.
@@ -164,15 +156,8 @@ class VPSDE(SDE):
         super().__init__(N)
         self.beta_min = beta_min
         self.beta_max = beta_max
-        self.eta = eta
-        self.eta_mode = eta_mode
         self.N = N
         self.t = 1.
-        self.vp_mode = vp_mode
-        self.customized_var = customized_var
-        self.cv_mode = cv_mode
-        self.cv1 = cv1
-        self.cv2 = cv2
         self.betas = np.linspace(self.beta_min / self.N, self.beta_max / self.N, self.N)
         self.alphas = 1 - self.betas
         self.alphas_cumprod = np.cumprod(self.alphas, axis=0)
@@ -180,8 +165,7 @@ class VPSDE(SDE):
         self.sqrt_1m_alphas_cumprod = np.sqrt(1 - self.alphas_cumprod)
 
     def copy(self):
-        return VPSDE(self.beta_min, self.beta_max, N=self.N, eta=self.eta, vp_mode=self.vp_mode, 
-                        eta_mode=self.eta_mode, customized_var=self.customized_var, cv1=self.cv1, cv2=self.cv2, cv_mode=self.cv_mode)
+        return DANS_SDE(self.beta_min, self.beta_max, N=self.N)
 
     @property
     def T(self):

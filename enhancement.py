@@ -8,11 +8,11 @@ from argparse import ArgumentParser
 from librosa import resample
 import librosa
 
-from sgmse.util.other import set_torch_cuda_arch_list
+from dans.util.other import set_torch_cuda_arch_list
 set_torch_cuda_arch_list()
 
-from sgmse.model import ScoreModel
-from sgmse.util.other import pad_spec
+from dans.model import ScoreModel
+from dans.util.other import pad_spec
 
 
 if __name__ == '__main__':

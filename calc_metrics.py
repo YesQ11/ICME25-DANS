@@ -9,8 +9,8 @@ import librosa
 
 from pystoi import stoi
 
-from sgmse.util.other import energy_ratios, mean_std
-from sgmse.util.semp import composite
+from dans.util.other import energy_ratios, mean_std
+from dans.util.semp import composite
 
 
 if __name__ == '__main__':

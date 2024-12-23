@@ -22,7 +22,7 @@ python enhancement.py --test_dir <path_to_noisy> --enhanced_dir <path_to_enhance
 ├── enhancement.py
 ├── README.md
 ├── requirements_py39.txt
-├── sgmse
+├── dans
 │   ├── backbones
 │   │   ├── __init__.py
 │   │   ├── ncsnpp.py

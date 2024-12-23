@@ -11,16 +11,16 @@ from pytorch_lightning.callbacks import ModelCheckpoint
 from os.path import join
 
 # Set CUDA architecture list   
-from sgmse.util.other import set_torch_cuda_arch_list
+from dans.util.other import set_torch_cuda_arch_list
 import torch
 set_torch_cuda_arch_list()
 torch.set_float32_matmul_precision('high')
 
 
-from sgmse.backbones.shared import BackboneRegistry
-from sgmse.data_module import SpecsDataModule
-from sgmse.sdes import SDERegistry
-from sgmse.model import ScoreModel
+from dans.backbones.shared import BackboneRegistry
+from dans.data_module import SpecsDataModule
+from dans.sdes import SDERegistry
+from dans.model import ScoreModel
 
 import json
 
@@ -42,7 +42,7 @@ if __name__ == '__main__':
                config = json.load(f)
 
           parser_.add_argument("--backbone", type=str, choices=BackboneRegistry.get_all_names(), default='ncsnpp')
-          parser_.add_argument("--sde", type=str, choices=SDERegistry.get_all_names(), default='vpsde')
+          parser_.add_argument("--sde", type=str, choices=SDERegistry.get_all_names(), default='dans_sde')
           parser_.add_argument("--nolog", default=True,action='store_true', help="Turn off logging.")
           parser_.add_argument("--wandb_name", type=str, default=None, help="Name for wandb logger. If not set, a random name is generated.")
           parser_.add_argument("--log_dir",type=str, help="Directory to save logs.")
