@@ -60,7 +60,7 @@ if __name__ == '__main__':
         Y = pad_spec(Y, mode=pad_mode)
         
         sampler = model.get_pc_sampler(
-                    'reverse_ddpm', 'ald', Y.to(args.device), N=20, 
+                    'reverse', 'ald', Y.to(args.device), N=20, 
                     corrector_steps=0, snr=args.snr)
         sample, _ = sampler()
 

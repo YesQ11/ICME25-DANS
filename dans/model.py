@@ -192,37 +192,3 @@ class ScoreModel(pl.LightningModule):
 
     def _istft(self, spec, length=None):
         return self.data_module.istft(spec, length)
-
-    def enhance(self, y, sampler_type="pc", predictor="reverse_diffusion",
-        corrector="ald", N=30, corrector_steps=1, snr=0.5, timeit=False,
-        **kwargs
-    ):
-        """
-        One-call speech enhancement of noisy speech `y`, for convenience.
-        """
-        print("--------enhance")
-        sr=16000
-        start = time.time()
-        T_orig = y.size(1) 
-        norm_factor = y.abs().max().item()
-        y = y / norm_factor
-        Y = torch.unsqueeze(self._forward_transform(self._stft(y.cuda())), 0)
-        Y = pad_spec(Y)
-        if sampler_type == "pc":
-            sampler = self.get_pc_sampler(predictor, corrector, Y.cuda(), N=N, 
-                corrector_steps=corrector_steps, snr=snr, intermediate=False,
-                **kwargs)
-        elif sampler_type == "ode":
-            sampler = self.get_ode_sampler(Y.cuda(), N=N, **kwargs)
-        else:
-            print("{} is not a valid sampler type!".format(sampler_type))
-        sample, nfe = sampler()
-        x_hat = self.to_audio(sample.squeeze(), T_orig)
-        x_hat = x_hat * norm_factor
-        x_hat = x_hat.squeeze().cpu().numpy()
-        end = time.time()
-        if timeit:
-            rtf = (end-start)/(len(x_hat)/sr)
-            return x_hat, nfe, rtf
-        else:
-            return x_hat

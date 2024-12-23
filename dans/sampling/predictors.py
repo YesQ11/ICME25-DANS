@@ -37,38 +37,8 @@ class Predictor(abc.ABC):
     def debug_update_fn(self, x, t, *args):
         raise NotImplementedError(f"Debug update function not implemented for predictor {self}.")
 
-
-@PredictorRegistry.register('euler_maruyama')
-class EulerMaruyamaPredictor(Predictor):
-    def __init__(self, sde, score_fn, probability_flow=False):
-        super().__init__(sde, score_fn, probability_flow=probability_flow)
-
-    def update_fn(self, x, t, *args):
-        dt = -1. / self.rsde.N
-        z = torch.randn_like(x)
-        f, g = self.rsde.sde(x, t, *args)
-        x_mean = x + f * dt
-        x = x_mean + g[:, None, None, None] * np.sqrt(-dt) * z
-        return x, x_mean
-
-
-@PredictorRegistry.register('reverse_diffusion')
-class ReverseDiffusionPredictor(Predictor):
-    def __init__(self, sde, score_fn, probability_flow=False,**kwargs):
-        super().__init__(sde, score_fn, probability_flow=probability_flow,**kwargs)
-        self.score_fn = score_fn
-        self.pred_obj = kwargs.get("pred_obj","s")
-
-    def update_fn(self, x, t, y, stepsize):
-        f, g ,score= self.rsde.discretize(x, t, y, stepsize)
-        z = torch.randn_like(x)
-        x_mean = x - f
-        x = x_mean + g[:, None, None, None] * z 
-        return x, x_mean 
-    
-
-@PredictorRegistry.register('reverse_ddpm')
-class ReverseDDPMPredictor(Predictor):
+@PredictorRegistry.register('reverse')
+class ReversePredictor(Predictor):
     def __init__(self, sde, score_fn, probability_flow=False,**kwargs):
         super().__init__(sde, score_fn, probability_flow=probability_flow,**kwargs)
         self.score_fn = score_fn
